@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self'">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel — JONS Burger</title>
+<link rel="icon" href="../img/logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<main id="login" hidden>
+  <form id="loginForm" class="lbox" autocomplete="on">
+    <img src="../img/logo.jpg" alt="JONS Burger" width="96" height="96">
+    <h1>Painel JONS</h1>
+    <label for="u">E-mail</label><input id="u" name="username" type="email" autocomplete="username" required>
+    <label for="p">Senha</label><input id="p" name="password" type="password" autocomplete="current-password" required>
+    <p class="err" id="lerr" role="alert"></p>
+    <button class="b main" type="submit">ENTRAR</button>
+  </form>
+</main>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="brand"><img src="../img/logo.jpg" alt="" width="40" height="40"><span>PAINEL <b>JONS</b></span></div>
+    <div class="filters">
+      <label class="sr" for="fDate">Data</label><input type="date" id="fDate">
+      <label class="sr" for="fStatus">Status</label>
+      <select id="fStatus"><option value="">Todos os status</option><option value="recebido">Recebido</option><option value="preparo">Em preparo</option><option value="pronto">Pronto</option><option value="entregue">Entregue</option><option value="cancelado">Cancelado</option></select>
+      <label class="sr" for="fQ">Buscar</label><input type="search" id="fQ" placeholder="Nº do pedido ou nome">
+    </div>
+    <div class="right"><span id="upd" aria-live="off">—</span><button class="b" id="snd" aria-pressed="false" title="Aviso sonoro de novo pedido">🔕 Som</button><button class="b" id="out">Sair</button></div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Seções do painel">
+    <button role="tab" id="tabOrders" aria-selected="true" aria-controls="vOrders">Pedidos</button>
+    <button role="tab" id="tabProducts" aria-selected="false" aria-controls="vProducts">Produtos e preços</button>
+    <button role="tab" id="tabSettings" aria-selected="false" aria-controls="vSettings">Configurações (Pix)</button>
+  </nav>
+  <div id="vOrders" role="tabpanel" aria-labelledby="tabOrders">
+  <section class="sum" aria-label="Resumo do dia">
+    <div><small>Pedidos do dia</small><b id="sCount">0</b></div>
+    <div><small>Total registrado (sem cancelados)</small><b id="sReg">R$ 0,00</b></div>
+    <div class="ok"><small>Pagamento confirmado</small><b id="sPaid">R$ 0,00</b></div>
+    <div class="wa"><small>Aguardando pagamento</small><b id="sPend">R$ 0,00</b></div>
+  </section>
+  <p class="note">“Total registrado” soma todos os pedidos não cancelados, mesmo sem pagamento confirmado. Só “Pagamento confirmado” é dinheiro conferido por você.</p>
+  <div class="cols" id="cols" aria-live="polite"></div>
+  </div>
+  <div id="vProducts" role="tabpanel" aria-labelledby="tabProducts" hidden class="pane">
+    <p class="note">Alterar o preço vale só para NOVOS pedidos; pedidos já feitos mantêm o preço da hora. Para tirar um item do ar, desmarque "Ativo". Itens novos aparecem no site sem foto (usam o logotipo).</p>
+    <div id="plist"></div>
+    <h2 class="an sec">Novo produto</h2>
+    <div class="prow" id="newp">
+      <label class="sr" for="npName">Nome</label><input id="npName" placeholder="Nome (ex.: JONS Veggie)" maxlength="80">
+      <label class="sr" for="npDesc">Descrição</label><input id="npDesc" placeholder="Descrição" maxlength="300">
+      <label class="sr" for="npPrice">Preço</label><input id="npPrice" placeholder="Preço (ex.: 19,90)" inputmode="decimal">
+      <label class="sr" for="npCat">Categoria</label><select id="npCat"><option value="burger">Hambúrguer</option><option value="side">Acompanhamento / bebida</option></select>
+      <button class="b main" id="npAdd">Adicionar</button>
+    </div>
+  </div>
+  <div id="vSettings" role="tabpanel" aria-labelledby="tabSettings" hidden class="pane">
+    <p class="note">Estes dados aparecem para o cliente depois que ele confirma o pedido. Só você (logado) pode vê-los e alterá-los aqui.</p>
+    <form id="setForm" class="sform">
+      <label for="sPixKey">Chave Pix</label><input id="sPixKey" maxlength="140" autocomplete="off">
+      <label for="sPixType">Tipo da chave</label><select id="sPixType"><option value="">—</option><option>CPF</option><option>CNPJ</option><option>E-mail</option><option>Telefone</option><option>Chave aleatória</option></select>
+      <label for="sPixRecv">Nome do recebedor (como aparece no banco)</label><input id="sPixRecv" maxlength="80" autocomplete="off">
+      <label for="sWa">WhatsApp (DDI+DDD+número, só números)</label><input id="sWa" inputmode="numeric" maxlength="15" autocomplete="off">
+      <label for="sAddr">Endereço (deixe vazio para mostrar só "Paracatu – MG")</label><input id="sAddr" maxlength="160" autocomplete="off">
+      <p class="err" id="setErr" role="alert"></p>
+      <button class="b main" type="submit">Salvar configurações</button>
+    </form>
+  </div>
+</div>
+
+<dialog id="dlg" aria-labelledby="dT"><div id="dBody"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="../config.js" defer></script>
+<script src="../js/sb.js" defer></script>
+<script src="admin.js" defer></script>
+</body>
+</html>

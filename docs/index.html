@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JONS Burger — O sabor que faltava na cidade! | Hamburgueria em Paracatu – MG</title>
+<meta name="description" content="JONS Burger: hambúrgueres artesanais em Paracatu – MG, todos os dias das 17h às 23h. Conheça o JONS Monster, faça seu pedido e pague por Pix.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="JONS Burger">
+<meta property="og:title" content="JONS Burger — O sabor que faltava na cidade!">
+<meta property="og:description" content="Hambúrgueres artesanais em Paracatu – MG. Faça seu pedido online e pague por Pix.">
+<meta name="twitter:card" content="summary_large_image">
+<!--
+  PENDENTE — COMPARTILHAMENTO (Open Graph): og:image e og:url EXIGEM endereço absoluto (https://...) do site publicado.
+  O domínio definitivo ainda não foi informado, então estas duas tags ficam desativadas para não apontar para um endereço inventado.
+  Quando souber o domínio, remova este comentário e adicione no <head>, trocando COLE_AQUI_O_ENDERECO_DO_SITE pelo endereço real:
+    <meta property="og:image" content="https://COLE_AQUI_O_ENDERECO_DO_SITE/img/og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Hambúrgueres artesanais da JONS Burger">
+    <meta property="og:url" content="https://COLE_AQUI_O_ENDERECO_DO_SITE/">
+    <link rel="canonical" href="https://COLE_AQUI_O_ENDERECO_DO_SITE/">
+  A imagem de compartilhamento já existe em docs/img/og.jpg (1200x630).
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self'">
+<meta name="theme-color" content="#0a0908">
+<link rel="icon" href="img/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@1&family=Permanent+Marker&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#cardapio">Ir para o cardápio</a>
+<header id="hd"><div class="wrap nav">
+  <a href="#inicio" class="logo" aria-label="JONS Burger, início"><img src="img/logo.jpg" alt="" width="46" height="46">JONS</a>
+  <div class="nb">
+    <button class="pill or" id="cartBtn" aria-label="Abrir pedido">Pedido <span id="cnt">0</span></button>
+    <button class="pill" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
+</div></header>
+<div id="nav" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
+  <a href="#cardapio">Cardápio</a><a href="#monster">JONS Monster</a><a href="#historia">Nossa história</a><a href="#diferenciais">Diferenciais</a><a href="#instagram">Instagram</a><a href="#contato">Contato</a>
+  <small>Paracatu – MG · 17h às 23h · @ons.burger</small>
+</div>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="bgi" data-y=".12"><img src="img/p6.jpg" alt="JONS Monster: hambúrguer duplo com cheddar, bacon e cebola caramelizada" fetchpriority="high"></div>
+  <div class="badge" aria-hidden="true">Sabor<br>de<br>verdade</div>
+  <div class="vt" aria-hidden="true">Paracatu – MG · 17h — 23h</div>
+  <div class="wrap">
+    <p class="lab" style="margin-bottom:14px">★ Hamburgueria artesanal · Est. 2026</p>
+    <h1 aria-label="O sabor que faltava na cidade!"><span><i>O sabor</i></span><span><i>que faltava</i></span><span><i class="or">na cidade!</i></span></h1>
+    <div class="meta">
+      <div><p>Hambúrgueres artesanais preparados para transformar sua fome em uma experiência inesquecível.</p>
+      <div class="row"><a class="btn p" href="#cardapio">VER CARDÁPIO</a><button class="btn s" id="orderHero">FAÇA SEU PEDIDO</button></div></div>
+      <div class="lab" style="text-align:right">↓ Role para descobrir</div>
+    </div>
+  </div>
+</section>
+<div class="mq o" aria-hidden="true"><div id="mq1"></div></div>
+
+<section id="monster">
+  <div class="big ol" aria-hidden="true" data-x="-.18">Monster</div>
+  <div class="wrap">
+    <div class="mph rv"><span class="st">O CHEFE DA CASA</span><div class="f"><img src="img/p6.jpg" alt="JONS Monster" loading="lazy"></div></div>
+    <div class="mtx rv">
+      <div class="lab">★ O protagonista</div>
+      <h2>JONS<br><span class="or">Monster</span></h2>
+      <p id="mdesc"></p>
+      <div class="pr" id="mprice"></div>
+      <div class="row"><button class="btn p" data-add="monster">ADICIONAR AO PEDIDO</button></div>
+    </div>
+  </div>
+</section>
+<div class="tear" style="--c:var(--bg2)"></div>
+
+<section id="cardapio"><div class="wrap">
+  <h2 class="h2 rv">Cardápio <span class="serif">oficial</span></h2>
+  <p class="sub rv">Escolha, adicione ao pedido e pague por Pix.</p>
+  <div id="burgers"></div>
+  <div class="sd"><h3 class="rv">Acompanhamentos <span class="or">&amp;</span> bebidas</h3><div class="sl rv" id="sides"></div></div>
+</div></section>
+
+<div class="mq r" aria-hidden="true"><div id="mq2"></div></div>
+
+<section id="historia">
+  <div class="tear" style="--c:var(--bg);position:absolute;top:0;left:0;right:0;transform:scaleY(-1);margin:0"></div>
+  <div class="wrap" style="padding-top:20px">
+    <h2 class="h2 rv">Nossa <span class="serif">história</span></h2>
+    <div class="sg">
+      <div class="rv">
+        <p>A JONS Burger nasceu em uma aula de empreendedorismo, como <b>ONS</b>: o nome surgiu das iniciais de <b>O</b>távio, <b>N</b>atã e <b>S</b>arah.</p>
+        <p>Com o <b>J</b> de João Vitor, também integrante e fundador do projeto, a marca passou a se chamar <b>JONS</b>. Hoje, ela representa a união de quatro pessoas com vontade de empreender e transformar uma ideia em marca.</p>
+        <div class="vals"><span>União</span><span>Criatividade</span><span>Iniciativa</span><span>Vontade de empreender</span></div>
+      </div>
+      <div class="names rv">
+        <div><span><span class="l">J</span>oão Vitor</span><small>FUNDADOR</small></div>
+        <div><span><span class="l">O</span>távio</span><small>FUNDADOR</small></div>
+        <div><span><span class="l">N</span>atã</span><small>FUNDADOR</small></div>
+        <div><span><span class="l">S</span>arah</span><small>FUNDADORA</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diferenciais"><div class="wrap">
+  <h2 class="h2 rv">Por que a <span class="serif">JONS Burger?</span></h2>
+  <div class="rv">
+    <div class="df"><b>01</b><h3>Hambúrgueres artesanais</h3><p>Feitos para quem gosta de sabor de verdade.</p></div>
+    <div class="df"><b>02</b><h3>Combinações de sabores</h3><p>Do clássico ao Monster, tem um para cada fome.</p></div>
+    <div class="df"><b>03</b><h3>Maionese especial da casa</h3><p>O toque que marca a identidade JONS.</p></div>
+    <div class="df"><b>04</b><h3>Para todos os gostos e bolsos</h3><p>Opções a partir de R$ 12,00.</p></div>
+    <div class="df"><b>05</b><h3>Foco na sua satisfação</h3><p>Atendimento pensado para o cliente voltar.</p></div>
+  </div>
+</div></section>
+
+<section id="instagram">
+  <div class="wrap"><div class="igh rv"><img src="img/logo.jpg" alt="Perfil @ons.burger" loading="lazy"><div><h2 class="h2" style="margin:0;font-size:clamp(44px,9vw,120px)">@ons<span class="or">.</span>burger</h2><p class="mk or" style="font-size:24px">O sabor que faltava na cidade!</p></div></div></div>
+  <div class="reel" id="gallery" tabindex="0" aria-label="Galeria de artes e produtos, role para o lado"></div>
+  <div class="wrap"><a class="btn p" href="https://www.instagram.com/ons.burger/" target="_blank" rel="noopener">VISITAR O INSTAGRAM</a></div>
+</section>
+
+<section id="contato"><div class="wrap">
+  <h2 class="h2 rv">Fale com <span class="serif">a JONS</span></h2>
+  <div class="info rv">
+    <div><b>INSTAGRAM</b><a href="https://www.instagram.com/ons.burger/" target="_blank" rel="noopener">@ons.burger</a></div>
+    <div><b>CIDADE</b>Paracatu – MG</div>
+    <div><b>HORÁRIO</b>17h às 23h</div>
+    <div><b>LOCALIZAÇÃO</b><span id="addr"></span></div>
+  </div>
+  <button class="btn p" id="contactBtn">ENTRAR EM CONTATO</button>
+  <div class="giant ol" aria-hidden="true" data-x=".05">JONS Burger</div>
+</div></section>
+</main>
+<footer><span class="mk or" style="font-size:24px">O sabor que faltava na cidade!</span><br>© 2026 JONS Burger · Projeto de empreendedorismo · Paracatu – MG</footer>
+
+<div class="ov" id="ov"></div>
+<aside id="cart" role="dialog" aria-modal="true" aria-label="Seu pedido" aria-hidden="true">
+  <h3><span id="cartTitle">Seu pedido</span> <button id="close" aria-label="Fechar pedido">×</button></h3>
+  <div id="viewCart" class="view">
+    <div id="items" aria-live="polite"></div>
+    <div class="tot"><span>Subtotal</span><span id="sub">R$ 0,00</span></div>
+    <div class="tot g"><span>Total</span><span id="tot">R$ 0,00</span></div>
+    <form id="orderForm" novalidate>
+      <label class="sr" for="cname">Seu nome</label><input id="cname" name="name" placeholder="Seu nome" autocomplete="name" maxlength="80" required>
+      <label class="sr" for="cphone">Telefone com DDD</label><input id="cphone" name="phone" placeholder="Telefone com DDD" inputmode="tel" autocomplete="tel" maxlength="20" required>
+      <label class="sr" for="obs">Observações</label><textarea id="obs" rows="2" maxlength="300" placeholder="Observações (opcional)"></textarea>
+      <p class="err" id="formErr" role="alert"></p>
+      <button class="btn p" id="send" type="submit" style="width:100%;justify-content:center;margin-top:8px">CONFIRMAR PEDIDO</button>
+    </form>
+    <button class="rm" id="lastLink" type="button" hidden style="margin-top:12px;align-self:center"></button>
+  </div>
+  <div id="viewDone" class="view" hidden></div>
+</aside>
+<button id="fab" aria-label="Ver pedido"></button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+<script src="config.js" defer></script>
+<script src="js/sb.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
