@@ -31,6 +31,12 @@
     <link rel="canonical" href="https://jonsburger.github.io/jons-burger/">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self'">
 <meta name="theme-color" content="#0a0908">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/pwa-apple-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="JONS Burger">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="img/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@1&family=Permanent+Marker&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
@@ -48,6 +54,7 @@
 <div id="nav" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
   <a href="#cardapio">Cardápio</a><a href="#monster">JONS Monster</a><a href="#historia">Nossa história</a><a href="#diferenciais">Diferenciais</a><a href="#instagram">Instagram</a><a href="#contato">Contato</a>
   <small>Paracatu – MG · 17h às 23h · @jons.burger</small>
+  <button type="button" class="btn s" data-install hidden style="margin-top:18px;align-self:flex-start;color:#000;box-shadow:inset 0 0 0 2px #000">INSTALAR O APP</button>
 </div>
 
 <main>
@@ -140,7 +147,7 @@
   <div class="giant ol" aria-hidden="true" data-x=".05">JONS Burger</div>
 </div></section>
 </main>
-<footer><span class="mk or" style="font-size:24px">O sabor que faltava na cidade!</span><br>© 2026 JONS Burger · Projeto de empreendedorismo · Paracatu – MG</footer>
+<footer><span class="mk or" style="font-size:24px">O sabor que faltava na cidade!</span><br>© 2026 JONS Burger · Projeto de empreendedorismo · Paracatu – MG<br><button type="button" class="btn s" data-install hidden style="margin-top:14px">INSTALAR O APP</button></footer>
 
 <div class="ov" id="ov"></div>
 <aside id="cart" role="dialog" aria-modal="true" aria-label="Seu pedido" aria-hidden="true">
@@ -167,5 +174,6 @@
 <script src="config.js" defer></script>
 <script src="js/sb.js" defer></script>
 <script src="js/app.js" defer></script>
+<script src="js/pwa.js" data-sw="sw.js" defer></script>
 </body>
 </html>
