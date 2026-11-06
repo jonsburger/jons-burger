@@ -6,8 +6,8 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* ====== CONFIGURAÇÃO EDITÁVEL (imagens do cardápio; preços ficam em src/catalog.js no servidor) ====== */
-const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/p6.jpg', mineirinho: 'img/og.jpg' };
-const GALLERY = [['img/p4.jpg', 'JONS Baratinho'], ['img/p5.jpg', 'JONS Bacon Crisp'], ['img/p6.jpg', 'JONS Monster'], ['img/fly.jpg', 'Cardápio'], ['img/duo.jpg', 'JONS Salada'], ['img/duo.jpg', 'JONS Chicken Smash'], ['img/og.jpg', 'JONS Mineirinho']];
+const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/p6.jpg', mineirinho: 'img/mineirinho.jpg' };
+const GALLERY = [['img/p4.jpg', 'JONS Baratinho'], ['img/p5.jpg', 'JONS Bacon Crisp'], ['img/p6.jpg', 'JONS Monster'], ['img/fly.jpg', 'Cardápio'], ['img/p7.jpg', 'JONS Salada'], ['img/p8.jpg', 'JONS Chicken Smash'], ['img/mineirinho.jpg', 'JONS Mineirinho']];
 const MARQUEE = 'ARTESANAL ★ PARACATU – MG ★ 17H ÀS 23H ★ MAIONESE ESPECIAL ★ JONS MONSTER ★ ';
 const POLL_MS = 10000;
 /* ================================================================================================= */
