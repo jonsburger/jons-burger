@@ -6,7 +6,10 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* ====== CONFIGURAÇÃO EDITÁVEL (imagens do cardápio; preços ficam em src/catalog.js no servidor) ====== */
-const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', jons-mineirinho: 'img/mineirinho.jpg' };
+/* Foto de cada produto: a CHAVE é o id do produto (coluna "id" da tabela products no Supabase). Chaves com hífen PRECISAM de aspas.
+   Se um produto não estiver aqui, o site tenta img/<id>.jpg, depois img/<id com _>.jpg e, por último, usa o logo. */
+const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', 'jons-mineirinho': 'img/jons_mineirinho.jpg' };
+const imgCandidates = (p) => [PRODUCT_IMG[p.id], `img/${p.id}.jpg`, `img/${p.id.replace(/-/g, '_')}.jpg`, 'img/logo.jpg'].filter((v, i, a) => v && a.indexOf(v) === i);
 const GALLERY = [['img/p4.jpg', 'JONS Baratinho'], ['img/p5.jpg', 'JONS Bacon Crisp'], ['img/p6.jpg', 'JONS Monster'], ['img/fly.jpg', 'Cardápio'], ['img/p7.jpg', 'JONS Salada'], ['img/p8.jpg', 'JONS Chicken Smash'], ['img/jons_mineirinho.jpg', 'JONS Mineirinho']];
 const MARQUEE = 'ARTESANAL ★ PARACATU – MG ★ 17H ÀS 23H ★ MAIONESE ESPECIAL ★ JONS MONSTER ★ ';
 const POLL_MS = 10000;
@@ -98,9 +101,10 @@ function buildMenu() {
   if (M) { $('#mdesc').textContent = M.description; $('#mprice').textContent = brl(M.price_cents); }
   $('#burgers').innerHTML = burgers.map((b, i) => `<article class="item rv"><span class="no">0${i + 1}</span>
     <div class="nm"><h3>${esc(b.name)}${b.featured ? '<span class="tg">O CHEFE DA CASA</span>' : ''}</h3><p>${esc(b.description)}</p></div>
-    <div class="th"><img src="${PRODUCT_IMG[b.id] || 'img/logo.jpg'}" alt="${esc(b.name)}" loading="lazy" width="280" height="170"></div>
+    <div class="th"><img src="${imgCandidates(b)[0]}" data-fb="${esc(JSON.stringify(imgCandidates(b).slice(1)))}" alt="${esc(b.name)}" loading="lazy" width="280" height="170"></div>
     <div class="pc"><span class="price">${brl(b.price_cents)}</span><button class="add" data-add="${b.id}" aria-label="Adicionar ${esc(b.name)} ao pedido">ADICIONAR</button></div></article>`).join('');
   $('#sides').innerHTML = sides.map((s) => `<div class="li"><span class="n">${esc(s.name)}<small>${esc(s.note)}</small></span><span class="d"></span><span class="price">${brl(s.price_cents)}</span><button class="add" data-add="${s.id}" aria-label="Adicionar ${esc(s.name)} ao pedido">ADICIONAR</button></div>`).join('');
+  document.querySelectorAll('#burgers .th img').forEach((im) => im.addEventListener('error', () => { let l = []; try { l = JSON.parse(im.dataset.fb || '[]'); } catch {} if (l.length) { im.dataset.fb = JSON.stringify(l.slice(1)); im.src = l[0]; } }));
   document.querySelectorAll('#burgers .rv,#sides').forEach((el) => io.observe(el));
 }
 async function loadMenu() {
