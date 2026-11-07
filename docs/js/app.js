@@ -8,7 +8,7 @@ const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 /* ====== CONFIGURAÇÃO EDITÁVEL (imagens do cardápio; preços ficam em src/catalog.js no servidor) ====== */
 /* Foto de cada produto: a CHAVE é o id do produto (coluna "id" da tabela products no Supabase). Chaves com hífen PRECISAM de aspas.
    Se um produto não estiver aqui, o site tenta img/<id>.jpg, depois img/<id com _>.jpg e, por último, usa o logo. */
-const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', 'jons-mineirinho': 'img/jons_mineirinho.jpg' };
+const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', 'jons-mineirinho': 'img/mineirinho.jpg' };
 const imgCandidates = (p) => [PRODUCT_IMG[p.id], `img/${p.id}.jpg`, `img/${p.id.replace(/-/g, '_')}.jpg`, 'img/logo.jpg'].filter((v, i, a) => v && a.indexOf(v) === i);
 const GALLERY = [['img/p4.jpg', 'JONS Baratinho'], ['img/p5.jpg', 'JONS Bacon Crisp'], ['img/p6.jpg', 'JONS Monster'], ['img/fly.jpg', 'Cardápio'], ['img/p7.jpg', 'JONS Salada'], ['img/p8.jpg', 'JONS Chicken Smash'], ['img/jons_mineirinho.jpg', 'JONS Mineirinho']];
 const MARQUEE = 'ARTESANAL ★ PARACATU – MG ★ 17H ÀS 23H ★ MAIONESE ESPECIAL ★ JONS MONSTER ★ ';
