@@ -181,3 +181,4 @@ html{overflow-x:hidden}main,footer{overflow-x:clip}
 [hidden]{display:none!important}
 .pill{white-space:nowrap}.price{white-space:nowrap}
 @media(max-width:480px){.item{grid-template-areas:"th nm" "pc pc"}.pc{gap:8px}.item .add{padding:10px 14px}.li{flex-wrap:wrap}.li .d{display:none}.li .n{flex:1 1 100%}.li .price{margin-right:auto}}
+.pushmsg{margin:8px 0 0;color:var(--cream);font-size:15px}
