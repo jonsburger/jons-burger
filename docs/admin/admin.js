@@ -12,6 +12,23 @@ const hhmm = (iso) => new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit
 const stamp = (iso) => new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 const today = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('on'), 2200); }
+/* ====== MENSAGENS DO WHATSAPP (edite os textos à vontade). Variáveis: {nome} {numero} {total} ====== */
+const WA_MSG = {
+  recebido: 'Olá, {nome}! Recebemos seu pedido #{numero} ({total}) na JONS Burger. Assim que o Pix for confirmado, começamos o preparo 🍔',
+  pago: 'Olá, {nome}! Recebemos o pagamento do pedido #{numero} ✅ Obrigado!',
+  preparo: 'Olá, {nome}! Seu pedido #{numero} está em preparo 🍔 Já já fica pronto!',
+  pronto: 'Olá, {nome}! Seu pedido #{numero} está pronto! 🎉',
+  entregue: 'Pedido #{numero} entregue, {nome}. Bom apetite! 🍔 Obrigado por escolher a JONS Burger!',
+  cancelado: 'Olá, {nome}. Seu pedido #{numero} foi cancelado. Se tiver dúvidas, é só responder aqui.',
+};
+function waLink(o) {
+  const key = o.status === 'recebido' ? (o.payment_status === 'pago' ? 'pago' : 'recebido') : o.status;
+  const first = String(o.customer_name).trim().split(' ')[0];
+  const text = (WA_MSG[key] || '').replace('{nome}', first).replace('{numero}', o.number).replace('{total}', brl(o.total_cents));
+  return 'https://wa.me/55' + String(o.customer_phone).replace(/\D/g, '') + '?text=' + encodeURIComponent(text);
+}
+/* Push: pede à Edge Function notify-order para avisar o aparelho do cliente (silencioso se não estiver configurada). */
+async function notifyPush(id, event) { try { const r = await SB.fn('notify-order', { order_id: id, event }); return r.ok && r.body ? r.body : null; } catch { return null; } }
 const REST_ERR = { ERR_TRANSICAO: [409, 'Essa mudança de status não é permitida.'], ERR_CANCELADO: [409, 'Pedido cancelado não aceita alteração de pagamento.'], ERR_NAO_ENCONTRADO: [404, 'Pedido não encontrado.'], ERR_NAO_AUTORIZADO: [403, 'Sem permissão de administrador.'] };
 const SEL = 'select=*,order_items(name,unit_price_cents,quantity)';
 const mapOrder = (o) => ({ id: o.id, number: o.public_number, created_at: o.created_at, updated_at: o.updated_at, status: o.status, payment_status: o.payment_status, total_cents: o.total_cents, subtotal_cents: o.subtotal_cents, customer_name: o.customer_name, customer_phone: o.customer_phone, notes: o.notes, paid_at: o.paid_at, items: (o.order_items || []).map((i) => ({ name: i.name, quantity: i.quantity, unit_price_cents: i.unit_price_cents })) });
@@ -60,7 +77,8 @@ async function api(method, url, body) {
       const k = Object.keys(REST_ERR).find((x) => String((r.body && r.body.message) || '').includes(x)); const [st, msg] = REST_ERR[k] || [400, 'Erro ao atualizar.'];
       return { ok: false, status: st, body: { message: msg } };
     }
-    return { ok: true, status: 200, body: { order: r.body, events: await eventsOf(id) } };
+    const push = await notifyPush(id, body.status ? 'status' : 'payment');
+    return { ok: true, status: 200, body: { order: r.body, events: await eventsOf(id), push } };
   }
   return { ok: false, status: 404, body: { message: 'Rota inexistente.' } };
 }
@@ -132,6 +150,7 @@ function fillDialog(o, events) {
     <dt>Observações</dt><dd>${o.notes ? esc(o.notes) : '<span style="color:var(--mut)">—</span>'}</dd></dl>
     <ul class="lines">${o.items.map((i) => `<li><span>${i.quantity}× ${esc(i.name)} <small style="color:var(--mut)">(${brl(i.unit_price_cents)})</small></span><b>${brl(i.unit_price_cents * i.quantity)}</b></li>`).join('')}</ul>
     <div class="tt"><span>Total</span><span>${brl(o.total_cents)}</span></div>
+    <div class="acts"><a class="b ok" id="waBtn" href="${waLink(o)}" target="_blank" rel="noopener">Avisar no WhatsApp: ${o.status === 'recebido' && o.payment_status === 'pago' ? 'Pagamento confirmado' : ST[o.status]}</a></div>
     <div class="acts">${pay}${st}${cancel}</div>
     ${lastEvents ? `<div class="ev">${lastEvents.map((e) => `${stamp(e.created_at)} — ${esc(e.kind)} ${esc(e.detail)} (${esc(e.actor)})`).join('<br>')}</div>` : ''}`;
 }
@@ -145,7 +164,7 @@ $('#dlg').addEventListener('click', async (e) => {
   busy = true; document.querySelectorAll('#dlg .acts .b').forEach((x) => (x.disabled = true));
   const r = await api('PATCH', '/api/admin/orders/' + openId, body); busy = false;
   if (!r.ok) { toast(r.body?.message || 'Erro ao atualizar'); fillDialog(orders.find((x) => x.id === openId), lastEvents); return; }
-  lastEvents = r.body.events; fillDialog(r.body.order, null); toast('✔ Atualizado'); refresh();
+  lastEvents = r.body.events; fillDialog(r.body.order, null); const pn = r.body.push && r.body.push.sent; toast(pn ? `✔ Atualizado · cliente avisado por push (${pn})` : '✔ Atualizado'); refresh();
 });
 
 /* ---------- abas: produtos e configurações ---------- */

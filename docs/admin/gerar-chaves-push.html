@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Gerar chaves de notificação — JONS</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+<style>body{margin:0;background:#0a0908;color:#f4ead5;font:17px/1.5 system-ui,Arial,sans-serif;padding:20px;max-width:680px;margin:auto}h1{color:#ff7a00;font-size:26px}code{display:block;word-break:break-all;background:#000;border:2px solid #333;padding:12px;margin:6px 0 14px}button{background:#ff7a00;border:0;padding:12px 20px;font:700 16px system-ui;cursor:pointer;margin:4px 6px 4px 0}.warn{border-left:6px solid #ff7a00;padding:8px 14px;background:#1a1612}</style></head>
+<body><h1>Chaves das notificações (VAPID)</h1>
+<p class="warn">As chaves são criadas <b>neste aparelho</b>, sem enviar nada para a internet. A <b>chave privada é segredo</b>: cole só no Supabase (Secrets) e não coloque em nenhum arquivo do site. Depois de usar, pode apagar esta página do GitHub.</p>
+<button id="g">Gerar novas chaves</button>
+<h2>Chave PÚBLICA</h2><p>Vai em <b>docs/config.js</b> (VAPID_PUBLIC_KEY) e no Secret <b>VAPID_PUBLIC_KEY</b>.</p><code id="pub">—</code><button data-c="pub">Copiar pública</button>
+<h2>Chave PRIVADA (segredo)</h2><p>Vai <b>somente</b> no Secret <b>VAPID_PRIVATE_KEY</b> do Supabase.</p><code id="priv">—</code><button data-c="priv">Copiar privada</button>
+<script>
+const b64u=(b)=>btoa(String.fromCharCode(...b)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const un=(s)=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+document.getElementById('g').onclick=async()=>{const k=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign']);const j=await crypto.subtle.exportKey('jwk',k.privateKey);
+const pub=new Uint8Array(65);pub[0]=4;pub.set(un(j.x),1);pub.set(un(j.y),33);document.getElementById('pub').textContent=b64u(pub);document.getElementById('priv').textContent=j.d};
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=async()=>{const t=document.getElementById(b.dataset.c).textContent;if(t==='—')return;try{await navigator.clipboard.writeText(t);b.textContent='Copiado ✔'}catch{const r=document.createRange();r.selectNode(document.getElementById(b.dataset.c));getSelection().removeAllRanges();getSelection().addRange(r)}});
+</script></body></html>
