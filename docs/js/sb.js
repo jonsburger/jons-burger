@@ -40,6 +40,7 @@
       if (r.ok && r.body && r.body.access_token) { store(r.body); return { ok: true }; }
       return { ok: false, status: r.status };
     },
+    fn: async (name, body) => raw('POST', '/functions/v1/' + name, { body: body || {}, token: await token() }),
     async logout() { const t = await token(); if (t) await raw('POST', '/auth/v1/logout', { token: t, body: {} }); setSess(null); },
     hasSession: () => !!getSess(),
   };

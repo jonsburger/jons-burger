@@ -8,11 +8,16 @@ const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 /* ====== CONFIGURAÇÃO EDITÁVEL (imagens do cardápio; preços ficam em src/catalog.js no servidor) ====== */
 /* Foto de cada produto: a CHAVE é o id do produto (coluna "id" da tabela products no Supabase). Chaves com hífen PRECISAM de aspas.
    Se um produto não estiver aqui, o site tenta img/<id>.jpg, depois img/<id com _>.jpg e, por último, usa o logo. */
-const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', 'jons-mineirinho': 'img/mineirinho.jpg' };
+const PRODUCT_IMG = { baratinho: 'img/c4.jpg', salada: 'img/sal.jpg', bacon: 'img/c5.jpg', chicken: 'img/chk.jpg', monster: 'img/jons_monster.jpg', 'jons-mineirinho': 'img/jons_mineirinho.jpg' };
 const imgCandidates = (p) => [PRODUCT_IMG[p.id], `img/${p.id}.jpg`, `img/${p.id.replace(/-/g, '_')}.jpg`, 'img/logo.jpg'].filter((v, i, a) => v && a.indexOf(v) === i);
 const GALLERY = [['img/p4.jpg', 'JONS Baratinho'], ['img/p5.jpg', 'JONS Bacon Crisp'], ['img/p6.jpg', 'JONS Monster'], ['img/fly.jpg', 'Cardápio'], ['img/p7.jpg', 'JONS Salada'], ['img/p8.jpg', 'JONS Chicken Smash'], ['img/jons_mineirinho.jpg', 'JONS Mineirinho']];
 const MARQUEE = 'ARTESANAL ★ PARACATU – MG ★ 17H ÀS 23H ★ MAIONESE ESPECIAL ★ JONS MONSTER ★ ';
 const POLL_MS = 10000;
+/* Notificações push: a chave PÚBLICA vem de config.js (VAPID_PUBLIC_KEY). Vazia = recurso desligado. */
+const VAPID = String((window.JONS_CONFIG || {}).VAPID_PUBLIC_KEY || '').trim();
+const IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+const STANDALONE = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const PUSH_OK = !!VAPID && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 /* ================================================================================================= */
 
 let site = { whatsapp: '5538999207706', address: '' };
@@ -167,8 +172,35 @@ $('#orderForm').addEventListener('submit', async (e) => {
   last = { number: r.body.order.number, token: r.body.token, order: r.body.order, pix: r.body.pix };
   store.set({ number: last.number, token: last.token });
   cart = {}; $('#obs').value = ''; render(); showDone(); toast('✔ Pedido enviado!');
+  if (PUSH_OK && !(IOS && !STANDALONE) && Notification.permission === 'granted') linkPush(last).then((ok) => { if (ok) { try { localStorage.setItem('jons_push_' + last.number, '1'); } catch {} showDone(); } }).catch(() => {}); // permissão já dada antes: liga sozinho
 });
 
+const b64uBytes = (s) => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); };
+async function linkPush(o) { // inscreve este aparelho no pedido (precisa de permissão já concedida)
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uBytes(VAPID) });
+  const j = sub.toJSON();
+  const r = await SB.rpc('save_push_subscription', { p_number: o.number, p_token: o.token, p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+  return r.ok && r.body === true;
+}
+async function enablePush() {
+  const msg = $('#pushMsg'), btn = $('#pushBtn'); if (!last) return; btn.disabled = true; msg.textContent = '';
+  try {
+    if ((await Notification.requestPermission()) !== 'granted') { msg.textContent = 'Permissão negada. Para ativar, libere as notificações deste site nas configurações do navegador.'; return; }
+    if (await linkPush(last)) { msg.textContent = '✔ Avisos ativados neste aparelho.'; btn.hidden = true; try { localStorage.setItem('jons_push_' + last.number, '1'); } catch {} }
+    else msg.textContent = 'Não foi possível ativar os avisos agora. Tente de novo.';
+  } catch { msg.textContent = 'Este navegador não conseguiu ativar os avisos.'; }
+  finally { btn.disabled = false; }
+}
+function pushBox(o) {
+  if (!VAPID) return '';
+  if (IOS && !STANDALONE) return '<p class="pushmsg">🔔 Quer avisos no iPhone? Instale o app (Compartilhar → Adicionar à Tela de Início), abra por ele e ative os avisos.</p>';
+  if (!PUSH_OK) return '';
+  let on = false; try { on = Notification.permission === 'granted' && localStorage.getItem('jons_push_' + o.number) === '1'; } catch {}
+  if (Notification.permission === 'denied') return '<p class="pushmsg">🔔 Avisos bloqueados neste navegador. Libere as notificações do site nas configurações para receber.</p>';
+  return on ? '<p class="pushmsg" id="pushMsg">✔ Avisos ativados neste aparelho.</p>' : '<button type="button" class="add" id="pushBtn" style="width:100%;margin-top:10px">🔔 AVISAR QUANDO O PEDIDO MUDAR</button><p class="pushmsg" id="pushMsg" role="status"></p>';
+}
 function showDone() {
   if (!last) return showCart();
   $('#viewCart').hidden = true; $('#viewDone').hidden = false; $('#cartTitle').textContent = `Pedido #${last.number}`;
@@ -190,8 +222,10 @@ function showDone() {
       <div class="tot g"><span>Total</span><span>${brl(o.total_cents)}</span></div>
       ${pixHtml}
     </div>
+    ${pushBox(o)}
     <a class="btn s" href="${wa}" target="_blank" rel="noopener" style="justify-content:center;margin-top:10px">ENVIAR COMPROVANTE NO WHATSAPP</a>
     <button class="btn p" id="newOrder" style="justify-content:center;margin-top:10px">FAZER NOVO PEDIDO</button>`;
+  if ($('#pushBtn')) $('#pushBtn').onclick = enablePush;
   $('#newOrder').onclick = () => { last = null; store.del(); showCart(); render(); };
   startPoll();
 }
